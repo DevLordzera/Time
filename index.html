@@ -288,7 +288,7 @@
         <div class="grid grid-cols-2 gap-4">
           <!-- Team A -->
           <div class="glass-panel p-4 rounded-2xl border-indigo-500/30 bg-indigo-950/20 flex flex-col items-center">
-            <input type="text" id="teamAName" value="Team Alpha" class="bg-transparent text-center font-bold text-sm text-indigo-300 focus:outline-none border-b border-transparent focus:border-indigo-400 w-full mb-1">
+            <input type="text" id="teamAName" value="Team Name" class="bg-transparent text-center font-bold text-sm text-indigo-300 focus:outline-none border-b border-transparent focus:border-indigo-400 w-full mb-1">
             <span id="scoreA" class="font-mono font-extrabold text-4xl text-white my-1">0</span>
             <div class="flex items-center gap-2 mt-2">
               <button onclick="adjustScore('A', -1)" class="w-8 h-8 rounded-lg glass-panel hover:bg-rose-500/30 text-rose-300 font-bold flex items-center justify-center">-</button>
@@ -298,7 +298,7 @@
 
           <!-- Team B -->
           <div class="glass-panel p-4 rounded-2xl border-cyan-500/30 bg-cyan-950/20 flex flex-col items-center">
-            <input type="text" id="teamBName" value="Team Bravo" class="bg-transparent text-center font-bold text-sm text-accent-cyan focus:outline-none border-b border-transparent focus:border-cyan-400 w-full mb-1">
+            <input type="text" id="teamBName" value="Team Name" class="bg-transparent text-center font-bold text-sm text-accent-cyan focus:outline-none border-b border-transparent focus:border-cyan-400 w-full mb-1">
             <span id="scoreB" class="font-mono font-extrabold text-4xl text-white my-1">0</span>
             <div class="flex items-center gap-2 mt-2">
               <button onclick="adjustScore('B', -1)" class="w-8 h-8 rounded-lg glass-panel hover:bg-rose-500/30 text-rose-300 font-bold flex items-center justify-center">-</button>
@@ -329,7 +329,6 @@
 
         <!-- Canvas Graphics & Corrected Pointer Position -->
         <div class="relative flex items-center justify-center my-2">
-          <!-- Corrigido: Apontador posicionado corretamente para baixo em direção ao topo da roleta -->
           <div id="wheelPointer" class="absolute -top-3 z-20 text-rose-500 text-3xl drop-shadow-md">
             <i class="fa-solid fa-location-pin"></i>
           </div>
@@ -353,7 +352,7 @@
             </button>
           </div>
 
-          <!-- Numbers Mode Config -->
+          <!-- Numbers Mode Config (Sem prefixo "Student #") -->
           <div id="numbersConfig" class="flex flex-col gap-2">
             <div class="grid grid-cols-2 gap-2">
               <div>
@@ -362,11 +361,11 @@
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 uppercase tracking-wider block mb-1">To Number</label>
-                <input type="number" id="numTo" value="20" min="2" max="100" class="w-full glass-input rounded-xl px-3 py-1.5 text-xs font-mono font-bold">
+                <input type="number" id="numTo" value="10" min="2" max="100" class="w-full glass-input rounded-xl px-3 py-1.5 text-xs font-mono font-bold">
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <input type="text" id="numPrefix" placeholder="Prefix (e.g., Student #)" value="Student #" class="w-full glass-input rounded-xl px-3 py-1.5 text-xs">
+              <input type="text" id="numPrefix" placeholder="Optional Prefix (e.g. #)" value="" class="w-full glass-input rounded-xl px-3 py-1.5 text-xs">
               <button onclick="generateNumberWheel()" class="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold whitespace-nowrap">
                 Apply Numbers
               </button>
@@ -376,7 +375,7 @@
           <!-- Custom List Mode Config -->
           <div id="customConfig" class="hidden flex-col gap-2">
             <label class="text-[10px] text-slate-400 uppercase tracking-wider">Comma/Newline Separated List:</label>
-            <textarea id="customWheelItems" rows="3" placeholder="Anna, Bruno, Carlos, Diana, Evan, Fiona..." class="w-full glass-input rounded-xl p-2.5 text-xs font-mono"></textarea>
+            <textarea id="customWheelItems" rows="3" placeholder="Alice, Bob, Charlie, David, Emma..." class="w-full glass-input rounded-xl p-2.5 text-xs font-mono"></textarea>
             <button onclick="generateCustomWheel()" class="w-full py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">
               Apply List to Wheel
             </button>
@@ -449,7 +448,7 @@
 
       <span class="text-xs font-mono font-bold text-indigo-300 uppercase tracking-widest mb-1">Spin Result / Selected</span>
       <h2 id="winnerResultText" class="font-display font-extrabold text-3xl sm:text-4xl text-white mb-6 tracking-wide break-words">
-        Student #7
+        1
       </h2>
 
       <div class="flex flex-col gap-2 w-full">
@@ -835,7 +834,7 @@
         });
       } else {
         const osc = ctx.createOscillator();
-        osc.type.setValueAtTime = 'sine';
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(220, now);
         osc.frequency.exponentialRampToValueAtTime(110, now + 1.5);
         osc.connect(gainNode);
@@ -853,8 +852,8 @@
     }
 
 
-    /* 4. CUSTOM SPIN WHEEL ENGINE (FIXED SPEED & ROTATION) */
-    let wheelItems = ["Student #1", "Student #2", "Student #3", "Student #4", "Student #5", "Student #6", "Student #7", "Student #8"];
+    /* 4. CUSTOM SPIN WHEEL ENGINE (CLEAN WITHOUT PREFIX) */
+    let wheelItems = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
     let allowDuplicates = false;
     let spinHistory = [];
 
@@ -927,10 +926,9 @@
       if (isSpinning || wheelItems.length === 0) return;
       
       isSpinning = true;
-      // Aumentado a velocidade de rotação inicial para durar mais tempo rodando
-      spinAngleStart = Math.random() * 0.4 + 0.6; // rad/frame velocity
+      spinAngleStart = Math.random() * 0.4 + 0.6;
       spinTime = 0;
-      spinTimeTotal = Math.random() * 2000 + 4000; // 4 a 6 segundos de giro
+      spinTimeTotal = Math.random() * 2000 + 4000;
       lastTickAngle = startAngle;
       rotateWheel();
     }
@@ -942,14 +940,12 @@
         return;
       }
       
-      // Desaceleração suave baseada em tempo (ease-out)
       const progress = spinTime / spinTimeTotal;
       const currentSpeed = spinAngleStart * (1 - Math.pow(progress, 3));
       
       startAngle += currentSpeed;
       drawWheel();
       
-      // Toca o som de tick sempre que passar por uma fatia nova
       if (Math.abs(startAngle - lastTickAngle) >= (Math.PI * 2 / wheelItems.length)) {
         playTickSound();
         lastTickAngle = startAngle;
@@ -963,7 +959,6 @@
       isSpinning = false;
       
       const arc = Math.PI * 2 / wheelItems.length;
-      // Normaliza o ângulo para encontrar exatamente o item no topo (ponteiro)
       const normalizedAngle = (2 * Math.PI - (startAngle % (Math.PI * 2))) % (Math.PI * 2);
       const index = Math.floor(normalizedAngle / arc);
       
